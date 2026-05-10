@@ -1,10 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import FormError from "../components/FormError";
-
-interface CreateTripProps {
-  onTripCreated?: () => void;
-}
 
 interface Errors {
   tripName?: string;
@@ -13,7 +10,8 @@ interface Errors {
   description?: string;
 }
 
-function CreateTrip({ onTripCreated }: CreateTripProps) {
+function CreateTrip() {
+  const navigate = useNavigate();
   const [tripName, setTripName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -65,7 +63,7 @@ function CreateTrip({ onTripCreated }: CreateTripProps) {
       setDescription("");
       setErrors({});
 
-      onTripCreated?.();
+      navigate("/itinerary");
     }
   };
 
@@ -162,12 +160,21 @@ function CreateTrip({ onTripCreated }: CreateTripProps) {
                 <FormError message={errors.description} />
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
-              >
-                Continue to Itinerary Builder →
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+                >
+                  Continue to Itinerary Builder →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard")}
+                  className="flex-1 border-2 border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold px-6 py-3 rounded-lg transition duration-200"
+                >
+                  ← Back to Dashboard
+                </button>
+              </div>
             </form>
           </div>
         </div>

@@ -1,12 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ItineraryCard from "../components/ItineraryCard";
 import BudgetCard from "../components/BudgetCard";
 import FormError from "../components/FormError";
-
-interface ItineraryBuilderProps {
-  onBackToCreate?: () => void;
-}
 
 interface Stop {
   id: string;
@@ -23,7 +20,8 @@ interface Errors {
   activity?: string;
 }
 
-function ItineraryBuilder({ onBackToCreate }: ItineraryBuilderProps) {
+function ItineraryBuilder() {
+  const navigate = useNavigate();
   const [tripName, setTripName] = useState(
     () => JSON.parse(localStorage.getItem("currentTrip") || "{}").tripName || "My Trip"
   );
@@ -147,12 +145,11 @@ function ItineraryBuilder({ onBackToCreate }: ItineraryBuilderProps) {
               </div>
               <button
                 onClick={() => {
-                  localStorage.removeItem("currentTrip");
-                  onBackToCreate?.();
+                  navigate("/dashboard");
                 }}
-                className="px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                className="px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition font-semibold"
               >
-                ← New Trip
+                ← Back to Dashboard
               </button>
             </div>
           </div>
