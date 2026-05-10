@@ -18,6 +18,7 @@ function CreateTrip() {
   const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [apiError, setApiError] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: Errors = {};
@@ -47,18 +48,37 @@ function CreateTrip() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      const tripData = {
-        tripName,
-        startDate,
-        endDate,
-        description,
-      };
+    if (!validateForm()) return;
 
-      localStorage.setItem("currentTrip", JSON.stringify(tripData));
+    setApiError("");
+
+    const tripData = {
+      tripName,
+      startDate,
+      endDate,
+      description,
+    };
+
+    try {
+      const response = await fetch("/api/trip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tripData),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        setApiError(errorBody?.message || "Failed to save trip. Please try again.");
+        return;
+      }
+
+      const savedTrip = await response.json();
+      localStorage.setItem("currentTrip", JSON.stringify(savedTrip));
 
       setTripName("");
       setStartDate("");
@@ -67,6 +87,8 @@ function CreateTrip() {
       setErrors({});
 
       navigate("/itinerary");
+    } catch (error) {
+      setApiError("Unable to connect to the backend. Please make sure it is running.");
     }
   };
 
@@ -211,6 +233,10 @@ function CreateTrip() {
                   ← Back to Dashboard
                 </button>
               </div>
+
+              {apiError && (
+                <p className="text-red-600 text-sm mt-4">⚠️ {apiError}</p>
+              )}
             </form>
           </div>
         </div>

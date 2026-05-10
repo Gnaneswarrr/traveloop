@@ -10,7 +10,7 @@ interface UserInfo {
 function Dashboard() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<UserInfo | null>(() => {
+  const [user] = useState<UserInfo | null>(() => {
     try {
       const isLoggedIn = localStorage.getItem("isLoggedIn");
 

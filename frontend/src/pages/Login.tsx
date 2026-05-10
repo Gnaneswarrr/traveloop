@@ -12,6 +12,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginErrors>({});
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   // Basic email validation
   const isValidEmail = (email: string) => {
@@ -37,28 +38,44 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
     setLoading(true);
+    setApiError("");
 
-    // Simulate API call (instant for demo)
-    setTimeout(() => {
-      // Save user info to localStorage
-      localStorage.setItem("user", JSON.stringify({ email, name: email.split("@")[0] }));
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        setApiError(errorBody?.message || "Login failed. Please try again.");
+        return;
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("isLoggedIn", "true");
 
-      // Clear form
       setEmail("");
       setPassword("");
       setErrors({});
-      setLoading(false);
 
-      // Navigate to dashboard
       navigate("/dashboard");
-    }, 500);
+    } catch (error) {
+      setApiError("Unable to connect to the backend. Please make sure it is running.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -122,6 +139,10 @@ function Login() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
+
+          {apiError && (
+            <p className="text-red-600 text-sm mt-3">⚠️ {apiError}</p>
+          )}
         </form>
 
         {/* Demo Info */}

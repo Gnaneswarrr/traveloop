@@ -177,24 +177,6 @@ function ItineraryBuilder() {
     });
   };
 
-  const handleRemoveActivity = (
-    stopId: string,
-    activityIndex: number
-  ) => {
-    const updatedStops = stops.map((stop) =>
-      stop.id === stopId
-        ? {
-            ...stop,
-            activities: stop.activities.filter(
-              (_, idx) => idx !== activityIndex
-            ),
-          }
-        : stop
-    );
-
-    setStops(updatedStops);
-  };
-
   const handleRemoveStop = (stopId: string) => {
     setStops(stops.filter((stop) => stop.id !== stopId));
 
@@ -204,10 +186,6 @@ function ItineraryBuilder() {
       );
     }
   };
-
-  const currentStop = stops.find(
-    (s) => s.id === selectedStopId
-  );
 
   return (
     <>
