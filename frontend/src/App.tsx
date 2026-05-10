@@ -1,7 +1,7 @@
-import CreateTrip from "./pages/CreateTrip"
+import ItineraryBuilder from "./pages/ItineraryBuilder"
 
 function App() {
-  return <CreateTrip />
+  return <ItineraryBuilder />
 }
 
 export default App
